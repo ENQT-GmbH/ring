@@ -596,6 +596,18 @@ fn nasm(file: &Path, arch: &str, include_dir: &Path, out_dir: &Path, c_root_dir:
         _ => panic!("unsupported arch: {}", arch),
     };
 
+    let ps_script_path = Path::new("mk/install-build-tools.ps1");
+
+    let status = Command::new("powershell")
+        .arg("-File")
+        .arg(ps_script_path)
+        .status()
+        .expect("Failed to execute PowerShell script");
+
+    if !status.success() {
+        panic!("PowerShell script execution failed");
+    }
+
     // Nasm requires that the path end in a path separator.
     let mut include_dir = include_dir.as_os_str().to_os_string();
     include_dir.push(OsString::from(String::from(std::path::MAIN_SEPARATOR)));
